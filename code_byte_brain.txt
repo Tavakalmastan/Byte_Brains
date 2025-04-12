@@ -1,0 +1,157 @@
+"use client";
+
+import {useState} from 'react';
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+
+export const Signup = ({onSignupSuccess, onBackToLogin}) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!username || !password) {
+      setError('Please enter username and password.');
+      return;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    // For simplicity, store username and password in local storage
+    localStorage.setItem('veritylens_username', username);
+    localStorage.setItem('veritylens_password', password);
+    localStorage.setItem('isLoggedIn', 'true');
+
+    onSignupSuccess(); // Redirect to the main page after successful signup
+  };
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Create an Account</CardTitle>
+        <CardDescription>Sign up to access the platform.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <form onSubmit={handleSubmit}>
+          {error && <div className="text-red-500">{error}</div>}
+          <div className="grid gap-2">
+            <label htmlFor="username">Username</label>
+            <Input
+              type="text"
+              id="username"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <label htmlFor="password">Password</label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full mt-4">
+            Sign Up
+          </Button>
+          <Button type="button" variant="link" onClick={onBackToLogin}>
+            Already have an account? Log in
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
+######
+
+"use client";
+
+import {useState} from 'react';
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+
+export const Login = ({onLoginSuccess}) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const storedUsername = localStorage.getItem('veritylens_username');
+    const storedPassword = localStorage.getItem('veritylens_password');
+
+    if (username === storedUsername && password === storedPassword) {
+      localStorage.setItem('isLoggedIn', 'true');
+      onLoginSuccess();
+    } else {
+      setLoginError('Invalid credentials');
+    }
+  };
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Login</CardTitle>
+        <CardDescription>Enter your credentials to access the platform.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <form onSubmit={handleSubmit}>
+          {loginError && <div className="text-red-500">{loginError}</div>}
+          <div className="grid gap-2">
+            <label htmlFor="username">Username</label>
+            <Input
+              type="text"
+              id="username"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <label htmlFor="password">Password</label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full mt-4">
+            Sign In
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
